@@ -40,6 +40,24 @@ services:
     networks:
       - backend
 
+  admin-service:
+    build:
+      context: ./Admin
+    image: admin-service:latest
+    container_name: admin-service
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5432/Ticket_DB
+      - SPRING_DATASOURCE_USERNAME=Dmitry
+      - SPRING_DATASOURCE_PASSWORD=qweqwe
+      - SPRING_CLOUD_CONSUL_HOST=consul
+      - SPRING_CLOUD_CONSUL_PORT=8500
+    depends_on:
+      - consul
+    networks:
+      - backend
+
 networks:
   backend:
     driver: bridge

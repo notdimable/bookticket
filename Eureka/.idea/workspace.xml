@@ -4,28 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3af45c18-bf0d-4a11-9efb-b5ff122f349e" name="Changes" comment="add Eureka">
-      <change afterPath="$PROJECT_DIR$/../Users/Dockerfile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Users/src/main/java/com/bookticket/app/api/users/Mapper/UserMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Users/src/main/java/com/bookticket/app/api/users/controller/UserController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Users/src/main/java/com/bookticket/app/api/users/exception/GlobalHandlerException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Users/src/main/java/com/bookticket/app/api/users/exception/UserNotFoundException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Users/src/main/java/com/bookticket/app/api/users/model/dto/ErrorResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Users/src/main/java/com/bookticket/app/api/users/model/dto/UserDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Users/src/main/java/com/bookticket/app/api/users/model/entity/User.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Users/src/main/java/com/bookticket/app/api/users/repository/UserRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Users/src/main/java/com/bookticket/app/api/users/service/UserServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Users/src/main/java/com/bookticket/app/api/users/service/interfaces/UserService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitattributes" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mvnw" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mvnw.cmd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/bookticket/app/api/eureka/EurekaApplication.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/bookticket/app/api/eureka/EurekaApplicationTests.java" beforeDir="false" />
-    </list>
+    <list default="true" id="3af45c18-bf0d-4a11-9efb-b5ff122f349e" name="Changes" comment="add &quot;User-service and dockerfile&quot;" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -41,7 +20,12 @@
     </option>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$/../Users" value="master" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../Users" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
   &quot;lastFilter&quot;: {
@@ -90,6 +74,7 @@
     "Spring Boot.EurekaApplication.executor": "Run",
     "Spring Boot.UsersApplication.executor": "Run",
     "com.codeium.enabled": "true",
+    "git-widget-placeholder": "develop",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -136,7 +121,7 @@
       <updated>1750841489247</updated>
       <workItem from="1750841490623" duration="12294000" />
       <workItem from="1750915730667" duration="3145000" />
-      <workItem from="1750918912194" duration="3349000" />
+      <workItem from="1750918912194" duration="4404000" />
     </task>
     <task id="LOCAL-00001" summary="Start page">
       <option name="closed" value="true" />
@@ -154,15 +139,35 @@
       <option name="project" value="LOCAL" />
       <updated>1750843717512</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="add &quot;User-service and dockerfile&quot;">
+      <option name="closed" value="true" />
+      <created>1750923037800</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1750923037800</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Start page" />
     <MESSAGE value="add Eureka" />
-    <option name="LAST_COMMIT_MESSAGE" value="add Eureka" />
+    <MESSAGE value="add &quot;User-service and dockerfile&quot;" />
+    <option name="LAST_COMMIT_MESSAGE" value="add &quot;User-service and dockerfile&quot;" />
   </component>
 </project>

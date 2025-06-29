@@ -22,13 +22,31 @@ services:
     networks:
       - backend
 
-  user-service:
+  user-service-1:
     build:
       context: ./Users
     image: user-service:latest
     container_name: user-service
     ports:
       - "8081:8081"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5432/Ticket_DB
+      - SPRING_DATASOURCE_USERNAME=Dmitry
+      - SPRING_DATASOURCE_PASSWORD=qweqwe
+      - SPRING_CLOUD_CONSUL_HOST=consul
+      - SPRING_CLOUD_CONSUL_PORT=8500
+    depends_on:
+      - consul
+    networks:
+      - backend
+
+  user-service-2:
+    build:
+      context: ./Users
+    image: user-service:latest
+    container_name: user-service-1
+    ports:
+      - "8083:8081"
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5432/Ticket_DB
       - SPRING_DATASOURCE_USERNAME=Dmitry
@@ -57,6 +75,22 @@ services:
       - consul
     networks:
       - backend
+
+  gateway-service:
+    build:
+      context: ./ApiGateway
+    container_name: gateway-service
+    ports:
+      - "8888:8888"
+    depends_on:
+      - consul
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_CLOUD_CONSUL_HOST=consul
+      - SPRING_CLOUD_CONSUL_PORT=8500
+    networks:
+      - backend
+      
 
 networks:
   backend:

@@ -2,6 +2,7 @@ package com.bookticket.app.api.users.controller;
 
 import com.bookticket.app.api.users.model.dto.UserDto;
 import com.bookticket.app.api.users.service.interfaces.UserService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,9 +17,12 @@ public class UserController {
         this.userService = userService;
     }
 
+    @Value("${spring.cloud.consul.discovery.instance-id}")
+    private String instanceId;
+
     @GetMapping("/check")
     public String status() {
-        return "check";
+        return "user-service:" + instanceId;
     }
 
     @GetMapping("/get/{id}")

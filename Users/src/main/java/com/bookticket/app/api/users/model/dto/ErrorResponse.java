@@ -8,7 +8,9 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
+@Getter
 public class ErrorResponse {
+
     private String error;
     private int status;
     private LocalDateTime timestamp;
@@ -19,19 +21,5 @@ public class ErrorResponse {
         this.timestamp = LocalDateTime.now();
     }
 
-    public String getError() {
-        return error;
-    }
 
-    public void setError(String error) {
-        this.error = error;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
-    }
 }

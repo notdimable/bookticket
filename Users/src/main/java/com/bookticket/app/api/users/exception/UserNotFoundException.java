@@ -2,11 +2,11 @@ package com.bookticket.app.api.users.exception;
 
 public class UserNotFoundException extends IllegalArgumentException {
 
-    public UserNotFoundException() {
+    public  UserNotFoundException(String email) {
+        super("Email is not found " + email);
     }
 
-    public UserNotFoundException(String s) {
-        super(s);
+    public UserNotFoundException() {
     }
 
     public UserNotFoundException(String message, Throwable cause) {

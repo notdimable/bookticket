@@ -11,9 +11,7 @@ import com.bookticket.app.api.users.service.interfaces.UserService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -65,24 +63,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUserDetailsByEmail(String email) {
-        UserEntity user = userRepository.findByEmail(email);
-        if(user == null) {
-            throw new UsernameNotFoundException(email);
-        }
-        return modelMapper.map(user, UserDto.class);
+        return null;
     }
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity user = userRepository.findByEmail(username);
-        if(user == null) {
-            throw new UsernameNotFoundException(username);
-        }
-        return new User(user.getEmail(), user.getPassword(),
-                true, true, true, true, new ArrayList<>());
-    }
-
-
-
-
 }

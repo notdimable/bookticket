@@ -1,9 +1,42 @@
 version: '3.8'
 
 services:
-  postgres:
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka
+    hostname: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_NODE_ID: 1
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_LISTENERS: PLAINTEXT://kafka:9092,CONTROLLER://kafka:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
+      CLUSTER_ID: Jj5Y1cZASfOs79Wy4vaJ1w
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+
+  kafdrop:
+    image: obsidiandynamics/kafdrop
+    container_name: kafdrop
+    depends_on:
+      - kafka
+    ports:
+      - "9000:9000"
+    environment:
+      KAFKA_BROKER_CONNECT: kafka:9092
+      JVM_OPTS: "-Xms32M -Xmx64M"
+
+
+  postgres-ticket:
     image: postgres:15
-    container_name: dev-postgres
+    container_name: postgres-ticket
     environment:
       POSTGRES_DB: Ticket_DB
       POSTGRES_USER: Dmitry
@@ -12,6 +45,30 @@ services:
       - "5432:5432"
     networks:
       - backend
+  postgres-admin:
+    image: postgres:15
+    container_name: postgres-admin
+    environment:
+      POSTGRES_DB: Admin
+      POSTGRES_USER: Dmitry
+      POSTGRES_PASSWORD: qweqwe
+    ports:
+      - "5433:5432"   # Прокси 5433 хост -> 5432 контейнер
+    networks:
+      - backend
+
+  postgres-book:
+    image: postgres:15
+    container_name: postgres-book
+    environment:
+      POSTGRES_DB: Book
+      POSTGRES_USER: Dmitry
+      POSTGRES_PASSWORD: qweqwe
+    ports:
+      - "5434:5432"
+    networks:
+      - backend
+
   consul:
     image: consul:1.15
     container_name: dev-consul
@@ -90,8 +147,32 @@ services:
       - SPRING_CLOUD_CONSUL_PORT=8500
     networks:
       - backend
-      
+
+  book-service:
+    build:
+      context: ./Book
+    image: book-service:latest
+    container_name: book-service
+    ports:
+      - "8091:8091"
+    environment:
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5432/Book
+      - SPRING_DATASOURCE_USERNAME=Dmitry
+      - SPRING_DATASOURCE_PASSWORD=qweqwe
+      - SPRING_CLOUD_CONSUL_HOST=consul
+      - SPRING_CLOUD_CONSUL_PORT=8500
+    depends_on:
+      - consul
+      - kafka
+    networks:
+      - backend
 
 networks:
   backend:
     driver: bridge
+
+
+volumes:
+  kafka-data:
+    

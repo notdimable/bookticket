@@ -1,9 +1,6 @@
 package com.bookticket.app.book.service.interfaces;
 
-import com.bookticket.app.book.model.entity.BookFlight;
 import com.bookticket.app.core.model.ServiceClass;
-import com.bookticket.app.core.model.dto.BookingDto;
-
 import java.util.Map;
 
 public interface BookService {

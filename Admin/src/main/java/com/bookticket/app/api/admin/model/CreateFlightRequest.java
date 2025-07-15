@@ -1,4 +1,4 @@
-package com.bookticket.app.core.model.dto;
+package com.bookticket.app.api.admin.model;
 
 import com.bookticket.app.core.model.FlightStatus;
 import com.bookticket.app.core.model.ServiceClass;

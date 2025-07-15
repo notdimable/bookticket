@@ -4,20 +4,26 @@ import com.bookticket.app.api.users.exception.EmailAlreadyExistsException;
 import com.bookticket.app.api.users.exception.PhoneNumberAlreadyExistsException;
 import com.bookticket.app.api.users.exception.UserNotFoundException;
 import com.bookticket.app.api.users.model.Request.CreateUsersRequestModel;
+import com.bookticket.app.api.users.model.Request.BookFlightRequest;
 import com.bookticket.app.api.users.model.dto.UserDto;
 import com.bookticket.app.api.users.model.entity.UserEntity;
 import com.bookticket.app.api.users.repository.UserRepository;
 import com.bookticket.app.api.users.service.interfaces.UserService;
+
+import com.bookticket.app.core.model.BookFlightCreatedEvent;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.SendResult;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+
+import static org.hibernate.sql.results.LoadingLogger.LOGGER;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -25,13 +31,40 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final ModelMapper modelMapper;
+    private final KafkaTemplate kafkaTemplate;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder,
-                           ModelMapper modelMapper) {
+                           ModelMapper modelMapper, KafkaTemplate kafkaTemplate) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.modelMapper = modelMapper;
+        this.kafkaTemplate = kafkaTemplate;
+    }
+
+    @Override
+    public BookFlightRequest kafkaCheck(BookFlightRequest request) throws Exception {
+        String flightId = UUID.randomUUID().toString();
+
+        BookFlightCreatedEvent event = new BookFlightCreatedEvent();
+        event.setFlightEventId(flightId);
+        event.setUsername(request.getUsername());
+        event.setPhoneNumber(request.getPhoneNumber());
+        event.setFlightNumber(request.getFlightNumber());
+        event.setServiceClass(request.getServiceClass());
+
+        CompletableFuture<SendResult<String, BookFlightCreatedEvent>> future =
+                kafkaTemplate.send("flight-booked-event-topic", flightId, event);
+        future.whenComplete((result, exception) -> {
+            if (exception != null) {
+                LOGGER.error("Error");
+            } else {
+                LOGGER.info("INFO");
+            }
+        });
+        future.join();
+
+        return request;
     }
 
     @Override
@@ -49,7 +82,8 @@ public class UserServiceImpl implements UserService {
     public UserDto createUser(CreateUsersRequestModel newUser) {
         if (userRepository.existsByEmail(newUser.getEmail())) {
             throw new EmailAlreadyExistsException(newUser.getEmail());
-        } if (userRepository.existsByPhoneNumber(newUser.getPhoneNumber())) {
+        }
+        if (userRepository.existsByPhoneNumber(newUser.getPhoneNumber())) {
             throw new PhoneNumberAlreadyExistsException(newUser.getPhoneNumber());
         }
 

@@ -1,8 +1,8 @@
 package com.bookticket.app.book.controller;
 
 import com.bookticket.app.book.service.interfaces.BookService;
+import com.bookticket.app.core.model.BookFlightCreatedEvent;
 import com.bookticket.app.core.model.ServiceClass;
-import com.bookticket.app.core.model.dto.BookingDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,7 +43,7 @@ public class BookController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<BookingDto> updatedBookedFlight(@RequestBody String userPhone) {
+    public ResponseEntity<BookFlightCreatedEvent> updatedBookedFlight(@RequestBody String userPhone) {
         bookService.updatedBookedFlight(userPhone);
         return ResponseEntity.ok().build();
     }

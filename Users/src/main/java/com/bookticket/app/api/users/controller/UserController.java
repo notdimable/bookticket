@@ -42,22 +42,12 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(request);
     }
 
-    @GetMapping("/get/{id}")
-    public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
-        UserDto user = userService.getDataUser(id);
-        return ResponseEntity.ok(user);
-    }
+    @PostMapping("/register")
+    public ResponseEntity<CreatedUserResponseModel> registerUser(@Valid @RequestBody CreateUsersRequestModel request) {
 
-    @PostMapping
-    public ResponseEntity<CreatedUserResponseModel> createUser(@Valid @RequestBody CreateUsersRequestModel newUser) {
-        UserDto user = userService.createUser(newUser);
-
-        ModelMapper modelMapper = new ModelMapper();
-        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-
-        CreatedUserResponseModel createdUserResponseModel = modelMapper.map(user, CreatedUserResponseModel.class);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdUserResponseModel);
+        CreatedUserResponseModel response = userService.registerUser(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }
+
 

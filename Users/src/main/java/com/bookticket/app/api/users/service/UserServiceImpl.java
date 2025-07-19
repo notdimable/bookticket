@@ -5,6 +5,7 @@ import com.bookticket.app.api.users.exception.PhoneNumberAlreadyExistsException;
 import com.bookticket.app.api.users.exception.UserNotFoundException;
 import com.bookticket.app.api.users.model.Request.CreateUsersRequestModel;
 import com.bookticket.app.api.users.model.Request.BookFlightRequest;
+import com.bookticket.app.api.users.model.dto.CreatedUserResponseModel;
 import com.bookticket.app.api.users.model.dto.UserDto;
 import com.bookticket.app.api.users.model.entity.UserEntity;
 import com.bookticket.app.api.users.repository.UserRepository;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -29,15 +31,13 @@ import static org.hibernate.sql.results.LoadingLogger.LOGGER;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
     private final ModelMapper modelMapper;
     private final KafkaTemplate kafkaTemplate;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder,
-                           ModelMapper modelMapper, KafkaTemplate kafkaTemplate) {
+    public UserServiceImpl(UserRepository userRepository,
+                           ModelMapper modelMapper, KafkaTemplate kafkaTemplate, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
         this.modelMapper = modelMapper;
         this.kafkaTemplate = kafkaTemplate;
     }
@@ -68,36 +68,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto getDataUser(Long id) {
-        Optional<UserEntity> optionalUser = userRepository.findById(id);
-        if (optionalUser.isEmpty()) {
-            throw new UserNotFoundException("User not found");
+    public CreatedUserResponseModel registerUser(CreateUsersRequestModel request) {
+        if(request == null) {
+            throw new IllegalArgumentException("Request cannot be null");
         }
-        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        UserEntity user = optionalUser.get();
-        return modelMapper.map(user, UserDto.class);
-    }
-
-    @Override
-    public UserDto createUser(CreateUsersRequestModel newUser) {
-        if (userRepository.existsByEmail(newUser.getEmail())) {
-            throw new EmailAlreadyExistsException(newUser.getEmail());
+        Optional<UserEntity> existingEmailUser = userRepository.findByEmail(request.getEmail());
+        if (existingEmailUser.isPresent()) {
+            throw new EmailAlreadyExistsException("Email already exists");
         }
-        if (userRepository.existsByPhoneNumber(newUser.getPhoneNumber())) {
-            throw new PhoneNumberAlreadyExistsException(newUser.getPhoneNumber());
+        Optional<UserEntity> existingPhoneUser = userRepository.findByPhoneNumber(request.getPhoneNumber());
+        if (existingPhoneUser.isPresent()) {
+            throw new PhoneNumberAlreadyExistsException("Phone number already exists");
         }
 
-        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-
-        UserEntity user = modelMapper.map(newUser, UserEntity.class);
-        user.setPassword(passwordEncoder.encode(newUser.getPassword()));
+        UserEntity user = modelMapper.map(request, UserEntity.class);
+        user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
         userRepository.save(user);
 
-        return modelMapper.map(user, UserDto.class);
+        return modelMapper.map(user, CreatedUserResponseModel.class);
     }
 
-    @Override
-    public UserDto getUserDetailsByEmail(String email) {
-        return null;
-    }
+
 }
